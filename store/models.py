@@ -15,7 +15,7 @@ class Promotion(models.Model):
 
 class Collection(models.Model):
     title = models.CharField(max_length=255)
-    featured_product = models.ForeignKey('Product', on_delete=models.SET_NULL, null=True,related_name='+')
+    featured_product = models.ForeignKey('Product', on_delete=models.SET_NULL, null=True, related_name='+')
     # related_name='+' means that we don't want to access the collection from the product model
 
 
@@ -26,10 +26,10 @@ class Product(models.Model):
     inventory = models.IntegerField()  # int
     created_at = models.DateTimeField(auto_now_add=True)  # datetime
     last_update = models.DateTimeField(auto_now=True)  # datetime
-# NOTICE!! if you want to add a reference to another model that is not defined yet, use the string name of the model
+    # NOTICE!! if you want to add a reference to another model that is not defined yet, use the string name of the model
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
     # on_delete=models.PROTECT will prevent the deletion of the collection if there are products that reference it
-    promotions = models.ManyToManyField(Promotion) # many-to-many relationship
+    promotions = models.ManyToManyField(Promotion)  # many-to-many relationship
 
 
 class Customer(models.Model):
@@ -47,6 +47,14 @@ class Customer(models.Model):
     phone = models.CharField(max_length=10)
     birth_date = models.DateField(null=True)
     membership = models.CharField(max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE)
+
+    class Meta:
+        # check this link for more info about Meta class: https://docs.djangoproject.com/en/4.1/ref/models/options/
+        indexes = [
+            models.Index(fields=['first_name', 'last_name']),
+            models.Index(fields=['email']),
+        ]
+        # indexes are used to improve the performance of the database queries
 
 
 class Order(models.Model):
@@ -92,7 +100,3 @@ class Address(models.Model):
     city = models.CharField(max_length=255)
     state = models.CharField(max_length=255)
     zip_code = models.CharField(max_length=5)
-
-
-
-
