@@ -7,6 +7,9 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ['title', 'unit_price', 'inventory_status', 'collection']
     list_editable = ['unit_price']
     list_per_page = 10
+    list_select_related = ['collection']
+    def collection(self, obj):
+        return obj.collection.title
     @admin.display(ordering='inventory')
     def inventory_status(self, obj):
         if obj.inventory > 0:
@@ -26,6 +29,5 @@ class CustomerAdmin(admin.ModelAdmin):
 
 admin.site.site_header = 'Store Admin'
 admin.site.index_title = 'Admin'
-admin.site.register(models.Collection)
 admin.site.register(models.Order)
 admin.site.register(models.OrderItem)
